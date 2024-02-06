@@ -7,7 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import Circle
 import mpl_toolkits.mplot3d.art3d as art3d
 import numpy as np
-# plt.style.use('classic')
+#plt.style.use('seaborn')
 
 AXIS_LIM = 2
 
@@ -95,10 +95,10 @@ N_inicial = ReferenceFrame('N')
 O_inicial = Point('O')
 
 parametros = [
-    (0, 20, 30, 1, 1, 0.5),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+    (0, np.radians(20), np.radians(30), 1, 1, 0.5),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
 ]
 
-seccion = Seccion(N_inicial, O_inicial, 0, 20, 30, 1, 1, 0.5, 0)
+seccion = Seccion(N_inicial, O_inicial, 0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -121,7 +121,8 @@ seccion.actualizar_valores(seccion.valores)
 # Graficar el punto O (Origen)
 O = [0, 0, 0]
 ax.scatter(*O, color='k', s=50, label='O')
-
+ax.scatter(*vector_to_components(seccion.coords_B, seccion.valores), color='k', s=50, label='B')
+#ax.scatter(*seccion.B_point, color='k', s=50, label='B')
 # Graficar vector_OA
 vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
 plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
@@ -178,7 +179,20 @@ def rotate_y(points, angle_rad):
         [0, 1, 0],
         [-np.sin(angle_rad), 0, np.cos(angle_rad)]
     ])
-    return np.dot(rotation_matrix, points)
+    return np.dot(points, rotation_matrix.T)
+
+def rotate_xy(points, center, angle_rad):
+    # Restar el centro para trasladar los puntos al origen
+    translated_points = points - center
+    # Matriz de rotación en el plano XY
+    rotation_matrix = np.array([
+        [np.cos(angle_rad), -np.sin(angle_rad), 0],
+        [np.sin(angle_rad), np.cos(angle_rad), 0],
+        [0, 0, 1]
+    ])
+    # Rotar los puntos y trasladarlos de vuelta
+    rotated_points = np.dot(translated_points, rotation_matrix.T) + center
+    return rotated_points
 
 # circulo 1
 
@@ -191,11 +205,16 @@ ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='bl
 
 # circulo 2
 
+center = np.array([C_NC[0], C_NC[1], C_NC[2]])
+x2, y2, z2 = circle_points(center[:2], 0.5, center[2])
+points2 = np.vstack((x2, y2, z2)).T
 
 
-""" p2 = Circle((C_NC[0], C_NC[1]), 0.5, fill=False)
-ax.add_patch(p2)
-art3d.patch_2d_to_3d(p2, z=C_NC[2], zdir="z") """
+# Rotar los puntos alrededor del eje X
+rotated_points = rotate_xy(points2, center,angle_rad)
+
+# Usar los puntos rotados para trazar el círculo 2
+ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='black')
 
 # Configuración del gráfico
 ax.set_xlabel('X')
