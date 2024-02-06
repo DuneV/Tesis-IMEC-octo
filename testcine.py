@@ -5,6 +5,7 @@ from sympy.physics.mechanics import ReferenceFrame, dynamicsymbols, Particle, Po
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+plt.style.use('classic')
 
 # se define una sección como una parte del brazo
 class Seccion:
@@ -84,3 +85,65 @@ class Seccion:
         self.vectork3 = self.vector3 - self.vector_r3
         pass
 
+N_inicial = ReferenceFrame('N')
+O_inicial = Point('O')
+
+parametros = [
+    (0, 20, 30, 1, 1, 0.5),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+]
+
+seccion = Seccion(N_inicial, O_inicial, 0, 20, 30, 1, 1, 0.5, 0)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Función para graficar vectores
+def plot_vector(ax, origin, vector, color, label):
+    ax.quiver(*origin, *vector, color=color, arrow_length_ratio=0.05, label=label)
+
+# Convertir los vectores Sympy a componentes numéricas
+def vector_to_components(vector, subs_dict=None):
+    if subs_dict:
+        vector = vector.subs(subs_dict)
+    return [float(vector.dot(N_inicial.x).evalf()), 
+            float(vector.dot(N_inicial.y).evalf()), 
+            float(vector.dot(N_inicial.z).evalf())]
+
+# Actualizar los valores de los vectores en la sección
+seccion.actualizar_valores(seccion.valores)
+
+# Graficar el punto O (Origen)
+O = [0, 0, 0]
+ax.scatter(*O, color='k', s=50, label='O')
+
+# Graficar vector_OA
+vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
+plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
+
+# Punto A es el destino del vector_OA
+A = vector_OA_components
+
+# Graficar vector_AB desde el punto A
+vector_AB_components = vector_to_components(seccion.vector_AB, seccion.valores)
+plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
+
+# Graficar otros vectores desde el origen para simplificar
+vectors = {
+    'vector1': (seccion.vector1, 'b'),
+    'vector2': (seccion.vector2, 'y'),
+    'vector3': (seccion.vector3, 'c'),
+    'vector_r1': (seccion.vector_r1, 'm'),
+    'vector_r2': (seccion.vector_r2, 'orange'),
+    'vector_r3': (seccion.vector_r3, 'purple')
+}
+
+for label, (vector, color) in vectors.items():
+    vector_components = vector_to_components(vector, seccion.valores)
+    plot_vector(ax, O, vector_components, color, label)
+
+# Configuración del gráfico
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.legend()
+plt.show()
