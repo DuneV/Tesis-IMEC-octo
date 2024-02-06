@@ -44,7 +44,7 @@ class Seccion:
 
         # aqui sabemos que self.d_A es la distancia de N a A donde tenemos un vector AN_
         self.vector_OA = self.d_A * self.N.y
-        # de igual forma con un vector de BA_ en dirección de Ay
+        # de igual forma con un vector de BA_ en dirección de Ay aqui deberia ser en B NO???? --- Probar
         self.vector_AB = self.d_B * self.A.y
 
         # se ubica un punto A en el sistema coordenado A
@@ -53,8 +53,10 @@ class Seccion:
         # se ubica un punto B en el sistema coordenado B
         self.B_point = self.A_point.locatenew(f'B_point_{name_suffix}', self.vector_AB)
         
+        # se calcula el vector desde el origen hasta el punto B con respecto a N
         self.coords_B = self.B_point.pos_from(self.O).express(self.N)
         
+        # se calcula el vector desde 
         self.vector1 = self.coords_B + self.delta_x * self.B.x
         self.vector1 = self.vector1.express(self.N)
         
