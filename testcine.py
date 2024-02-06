@@ -4,8 +4,12 @@ from sympy import symbols, pi, cos, sin
 from sympy.physics.mechanics import ReferenceFrame, dynamicsymbols, Particle, Point
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.patches import Circle
+import mpl_toolkits.mplot3d.art3d as art3d
 import numpy as np
-plt.style.use('classic')
+# plt.style.use('classic')
+
+AXIS_LIM = 2
 
 # se define una sección como una parte del brazo
 class Seccion:
@@ -46,8 +50,10 @@ class Seccion:
         # aqui sabemos que self.d_A es la distancia de N a A donde tenemos un vector AN_
         self.vector_OA = self.d_A * self.N.y
         # de igual forma con un vector de BA_ en dirección de Ay aqui deberia ser en B NO???? --- Probar
-        self.vector_AB = self.d_B * self.A.y
+        self.vector_AB = self.d_B * self.B.y
+        self.vector_AB = self.vector_AB.express(self.N)
 
+        self.vector_N = self.vector_OA + self.vector_AB
         # se ubica un punto A en el sistema coordenado A
         self.A_point = self.O.locatenew(f'A_point_{name_suffix}', self.vector_OA)
         
@@ -66,8 +72,8 @@ class Seccion:
         self.vector2 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle) + self.B.z * sin(self.angle))).express(self.N)
         self.vector3 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle2) + self.B.z * sin(self.angle2))).express(self.N)
         
-        # encuentro los vectores desd el punto O al punto del springs 1, 2 y 3 con respecto a N
-        self.vector_r1 = self.delta_x * self.N.x
+        # encuentro los vectores desd el punto O al punto del springs 1, 2 y 3 con respecto a N (R)
+        self.vector_r1 = self.delta_x * self.N.x 
         self.vector_r2 = self.delta_x * (self.N.x * cos(self.angle) + self.N.z * sin(self.angle))
         self.vector_r3 = self.delta_x * (self.N.x * cos(self.angle2) + self.N.z * sin(self.angle2))
 
@@ -134,16 +140,71 @@ vectors = {
     'vector3': (seccion.vector3, 'c'),
     'vector_r1': (seccion.vector_r1, 'm'),
     'vector_r2': (seccion.vector_r2, 'orange'),
-    'vector_r3': (seccion.vector_r3, 'purple')
+    'vector_r3': (seccion.vector_r3, 'purple'),
+    'vector_N': (seccion.vector_N, 'magenta')
 }
 
 for label, (vector, color) in vectors.items():
-    vector_components = vector_to_components(vector, seccion.valores)
-    plot_vector(ax, O, vector_components, color, label)
+    if label == 'vector_N':
+        vector_components = vector_to_components(vector, seccion.valores)
+        plot_vector(ax, O, vector_components, color, label)
+        C_NC = vector_components
+    else:
+        vector_components = vector_to_components(vector, seccion.valores)
+        plot_vector(ax, O, vector_components, color, label)
+
+# Función para crear puntos alrededor de un círculo en 3D
+
+def circle_points(center, radius, z, num_points=100):
+    theta = np.linspace(0, 2*np.pi, num_points)
+    x = center[0] + radius * np.cos(theta)
+    y = center[1] + radius * np.sin(theta)
+    z = np.full_like(x, z)
+    return x, y, z
+
+# Función para rotar puntos alrededor del eje x y y con las matrices de rotación correspondiente
+
+def rotate_x(points, angle_rad):
+    rotation_matrix = np.array([
+        [1, 0, 0],
+        [0, np.cos(angle_rad), -np.sin(angle_rad)],
+        [0, np.sin(angle_rad), np.cos(angle_rad)]
+    ])
+    return np.dot(points, rotation_matrix.T)
+
+def rotate_y(points, angle_rad):
+    rotation_matrix = np.array([
+        [np.cos(angle_rad), 0, np.sin(angle_rad)],
+        [0, 1, 0],
+        [-np.sin(angle_rad), 0, np.cos(angle_rad)]
+    ])
+    return np.dot(rotation_matrix, points)
+
+# circulo 1
+
+x, y, z = circle_points([0, 0, 0], 0.5, 0)
+points = np.vstack((x, y, z)).T
+angle_rad = np.radians(90)
+rotated_points = rotate_x(points, angle_rad)
+
+ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='black')
+
+# circulo 2
+
+
+
+""" p2 = Circle((C_NC[0], C_NC[1]), 0.5, fill=False)
+ax.add_patch(p2)
+art3d.patch_2d_to_3d(p2, z=C_NC[2], zdir="z") """
 
 # Configuración del gráfico
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.legend()
+
+ax.set_xlim(-AXIS_LIM, AXIS_LIM)
+ax.set_ylim(-AXIS_LIM, AXIS_LIM)
+ax.set_zlim(-AXIS_LIM, AXIS_LIM)
+
 plt.show()
