@@ -163,6 +163,22 @@ def circle_points(center, radius, z, num_points=100):
     z = np.full_like(x, z)
     return x, y, z
 
+def circle_points_A(center, radius, z, num_points=100):
+    theta = np.linspace(0, 2*np.pi, num_points)
+    x = center[0] + radius * np.cos(theta)
+    y = center[1] + radius * np.sin(theta)
+    z = np.full_like(x, z)
+    return np.vstack((x, y, z)).T
+
+def rotate_points(points, angle_rad):
+    # Matriz de rotación en el plano XY
+    rotation_matrix = np.array([
+        [np.cos(angle_rad), -np.sin(angle_rad), 0],
+        [np.sin(angle_rad), np.cos(angle_rad), 0],
+        [0, 0, 1]
+    ])
+    return np.dot(points, rotation_matrix.T)
+
 # Función para rotar puntos alrededor del eje x y y con las matrices de rotación correspondiente
 
 def rotate_x(points, angle_rad):
@@ -206,15 +222,16 @@ ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='bl
 # circulo 2
 
 center = np.array([C_NC[0], C_NC[1], C_NC[2]])
-x2, y2, z2 = circle_points(center[:2], 0.5, center[2])
-points2 = np.vstack((x2, y2, z2)).T
+angle_rad = np.radians(45)  # Cambia este ángulo para ver diferentes rotaciones
 
+# Generar puntos para el segundo círculo y aplicar la rotación
+points2 = circle_points_A(center[:2], 0.5, center[2])
 
-# Rotar los puntos alrededor del eje X
-rotated_points = rotate_xy(points2, center,angle_rad)
+rotated_points2 = rotate_points(points2, angle_rad)
 
-# Usar los puntos rotados para trazar el círculo 2
-ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='black')
+# Visualizar el círculo antes y después de la rotación
+# ax.scatter(points2[:,0], points2[:,1], points2[:,2], color='blue', label='Original')
+ax.scatter(rotated_points2[:,0], rotated_points2[:,1], rotated_points2[:,2], color='red', label='Rotated')
 
 # Configuración del gráfico
 ax.set_xlabel('X')
