@@ -228,7 +228,8 @@ points2[:, 1] += center[1]
 points2[:, 2] += center[2]
 
 
-# angle_rad = np.radians(45)  # Cambia este ángulo para ver diferentes rotaciones
+angle_rad = np.radians(30)  # Cambia este ángulo para ver diferentes rotaciones
+points2 = rotate_xy(points2, center, angle_rad)
 
 # # Generar puntos para el segundo círculo y aplicar la rotación
 # x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
