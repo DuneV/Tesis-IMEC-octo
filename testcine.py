@@ -221,17 +221,22 @@ ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='bl
 
 # circulo 2
 
+points2 = np.copy(rotated_points)
 center = np.array([C_NC[0], C_NC[1], C_NC[2]])
-angle_rad = np.radians(45)  # Cambia este ángulo para ver diferentes rotaciones
+points2[:, 0] += center[0]
+points2[:, 1] += center[1]
+points2[:, 2] += center[2]
 
-# Generar puntos para el segundo círculo y aplicar la rotación
-points2 = circle_points_A(center[:2], 0.5, center[2])
 
-rotated_points2 = rotate_points(points2, angle_rad)
+# angle_rad = np.radians(45)  # Cambia este ángulo para ver diferentes rotaciones
 
+# # Generar puntos para el segundo círculo y aplicar la rotación
+# x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
+# points2 = np.vstack((x2, y2, z2)).T
 # Visualizar el círculo antes y después de la rotación
 # ax.scatter(points2[:,0], points2[:,1], points2[:,2], color='blue', label='Original')
-ax.scatter(rotated_points2[:,0], rotated_points2[:,1], rotated_points2[:,2], color='red', label='Rotated')
+ax.scatter(points2[:, 0], points2[:, 1], points2[:, 2], color='black')
+
 
 # Configuración del gráfico
 ax.set_xlabel('X')
