@@ -99,7 +99,7 @@ parametros = [
 ]
 
 seccion = Seccion(N_inicial, O_inicial, 0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0)
-
+seccion2 = Seccion(seccion.B, seccion.B_point, 0, np.radians(10), np.radians(20), 1, 1, 0.5, 1)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -111,18 +111,27 @@ def plot_vector(ax, origin, vector, color, label):
 def vector_to_components(vector, subs_dict=None):
     if subs_dict:
         vector = vector.subs(subs_dict)
-    return [float(vector.dot(N_inicial.x).evalf()), 
-            float(vector.dot(N_inicial.y).evalf()), 
-            float(vector.dot(N_inicial.z).evalf())]
+    return [float(vector.dot(N_inicial.x).evalf(subs=subs_dict)), 
+            float(vector.dot(N_inicial.y).evalf(subs=subs_dict)), 
+            float(vector.dot(N_inicial.z).evalf(subs=subs_dict))]
 
 # Actualizar los valores de los vectores en la sección
+
 seccion.actualizar_valores(seccion.valores)
+seccion2.actualizar_valores(seccion2.valores)
 
 # Graficar el punto O (Origen)
 O = [0, 0, 0]
 ax.scatter(*O, color='k', s=50, label='O')
-ax.scatter(*vector_to_components(seccion.coords_B, seccion.valores), color='k', s=50, label='B')
-#ax.scatter(*seccion.B_point, color='k', s=50, label='B')
+B_point = vector_to_components(seccion.coords_B, seccion.valores)
+ax.scatter(*B_point, color='k', s=50, label='B')
+test = seccion2.coords_B 
+test = test.subs(seccion.valores)
+comp = [test.dot(seccion.B.x), test.dot(seccion.B.y), test.dot(seccion.B.z)]
+
+# ax.scatter(*comp, color='g', s=50, label='B2')
+
+# ax.scatter(*seccion.B_point, color='k', s=50, label='B')
 # Graficar vector_OA
 vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
 plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
@@ -154,6 +163,10 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.valores)
         plot_vector(ax, O, vector_components, color, label)
 
+comp = [x + y for x, y in zip(comp, C_NC)]
+ax.scatter(*comp, color='g', s=50, label='B2')
+print(comp)
+plot_vector(ax, B_point, comp, 'purple', 'r2' )
 # Función para crear puntos alrededor de un círculo en 3D
 
 def circle_points(center, radius, z, num_points=100):
@@ -210,6 +223,19 @@ def rotate_xy(points, center, angle_rad):
     rotated_points = np.dot(translated_points, rotation_matrix.T) + center
     return rotated_points
 
+def rotate_xz(points, center, angle_rad):
+    # Restar el centro para trasladar los puntos al origen
+    translated_points = points - center
+    # Matriz de rotación en el plano XZ
+    rotation_matrix = np.array([
+        [np.cos(angle_rad), 0, np.sin(angle_rad)],
+        [0, 1, 0],
+        [-np.sin(angle_rad), 0, np.cos(angle_rad)]
+    ])
+    # Rotar los puntos y trasladarlos de vuelta
+    rotated_points = np.dot(translated_points, rotation_matrix.T) + center
+    return rotated_points
+
 # circulo 1
 
 x, y, z = circle_points([0, 0, 0], 0.5, 0)
@@ -229,7 +255,9 @@ points2[:, 2] += center[2]
 
 
 angle_rad = np.radians(30)  # Cambia este ángulo para ver diferentes rotaciones
+angle_rad2 = np.radians(20)
 points2 = rotate_xy(points2, center, angle_rad)
+points2 = rotate_xz(points2, center, angle_rad2)
 
 # # Generar puntos para el segundo círculo y aplicar la rotación
 # x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
