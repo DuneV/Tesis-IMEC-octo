@@ -33,7 +33,9 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 # Trazar superficie
-ax.plot_trisurf(reduced_vertices[:, 0], reduced_vertices[:, 1], reduced_vertices[:, 2], triangles=reduced_faces, cmap='viridis')
+ax.plot_trisurf(reduced_vertices[:, 0], reduced_vertices[:, 1], reduced_vertices[:, 2], triangles=reduced_faces, cmap='Greys')
+
+
 
 # Mostrar gráfico
 plt.show()
