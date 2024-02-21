@@ -105,7 +105,11 @@ ax = fig.add_subplot(111, projection='3d')
 
 # Función para graficar vectores
 def plot_vector(ax, origin, vector, color, label):
-    ax.quiver(*origin, *vector, color=color, arrow_length_ratio=0.05, label=label)
+    origin_x, origin_y, origin_z = origin
+    
+    vector_x, vector_y, vector_z = vector
+
+    ax.quiver(origin_x, origin_y, origin_z, vector_x, vector_y, vector_z, color=color, arrow_length_ratio=0.05, label=label)
 
 # Convertir los vectores Sympy a componentes numéricas
 def vector_to_components(vector, subs_dict=None):
@@ -125,6 +129,9 @@ O = [0, 0, 0]
 ax.scatter(*O, color='k', s=50, label='O')
 B_point = vector_to_components(seccion.coords_B, seccion.valores)
 ax.scatter(*B_point, color='k', s=50, label='B')
+ref_pointB = B_point
+print(ref_pointB)
+
 test = seccion2.coords_B 
 test = test.subs(seccion.valores)
 comp = [test.dot(seccion.B.x), test.dot(seccion.B.y), test.dot(seccion.B.z)]
@@ -166,7 +173,8 @@ for label, (vector, color) in vectors.items():
 comp = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp, color='g', s=50, label='B2')
 print(comp)
-plot_vector(ax, B_point, comp, 'purple', 'r2' )
+print(C_NC)
+plot_vector(ax, C_NC, comp, 'purple', 'r2' )
 # Función para crear puntos alrededor de un círculo en 3D
 
 def circle_points(center, radius, z, num_points=100):
