@@ -99,7 +99,9 @@ parametros = [
 ]
 
 seccion = Seccion(N_inicial, O_inicial, 0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0)
-seccion2 = Seccion(seccion.B, seccion.B_point, 0, np.radians(10), np.radians(20), 1, 1, 0.5, 1)
+seccion2 = Seccion(seccion.B, seccion.B_point, 0, np.radians(-20), np.radians(-30), 1, 1, 0.5, 1)
+seccion3 = Seccion(seccion2.B, seccion2.B_point, 0, np.radians(20), np.radians(30), 1, 1, 0.5, 1)
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -130,11 +132,18 @@ ax.scatter(*O, color='k', s=50, label='O')
 B_point = vector_to_components(seccion.coords_B, seccion.valores)
 ax.scatter(*B_point, color='k', s=50, label='B')
 ref_pointB = B_point
-print(ref_pointB)
+
+comp2 = [seccion.vector1.dot(N_inicial.x), seccion.vector1.dot(N_inicial.y), seccion.vector1.dot(N_inicial.z)]
+comp3 = [seccion.vector2.dot(N_inicial.x).subs(seccion.valores), seccion.vector2.dot(N_inicial.y).subs(seccion.valores), seccion.vector2.dot(N_inicial.z).subs(seccion.valores)]
+comp4 = [seccion.vector3.dot(N_inicial.x).subs(seccion.valores), seccion.vector3.dot(N_inicial.y).subs(seccion.valores), seccion.vector3.dot(N_inicial.z).subs(seccion.valores)]
+
 
 test = seccion2.coords_B 
-test = test.subs(seccion.valores)
+test = test.subs(seccion2.valores)
 comp = [test.dot(seccion.B.x), test.dot(seccion.B.y), test.dot(seccion.B.z)]
+
+test2 = [seccion2.vector1.dot(seccion2.N.x), seccion2.vector1.dot(seccion2.N.y), seccion2.vector1.dot(seccion2.N.z)]
+print(test2)
 
 # ax.scatter(*comp, color='g', s=50, label='B2')
 
@@ -170,11 +179,21 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.valores)
         plot_vector(ax, O, vector_components, color, label)
 
-comp = [x + y for x, y in zip(comp, C_NC)]
-ax.scatter(*comp, color='g', s=50, label='B2')
-print(comp)
-print(C_NC)
-plot_vector(ax, C_NC, comp, 'purple', 'r2' )
+comp1 = [x + y for x, y in zip(comp, C_NC)]
+ax.scatter(*comp1, color='g', s=50, label='B2')
+test2 = [x + y for x, y in zip(test2,  C_NC)]
+ax.scatter(*test2, color='b', s=50, label='test')
+
+plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
+
+comp2 = [comp2[0] - B_point[0], comp2[1] - B_point[1], comp2[2] - B_point[2]]
+comp3 = [comp3[0] - B_point[0], comp3[1] - B_point[1], comp3[2] - B_point[2]]
+comp4 = [comp4[0] - B_point[0], comp4[1] - B_point[1], comp4[2] - B_point[2]]
+
+plot_vector(ax, B_point, comp2, 'magenta', 'vector_r12')
+plot_vector(ax, B_point, comp3, 'g', 'vector_r22')
+plot_vector(ax, B_point, comp4, 'r', 'vector_r32')
+
 # Función para crear puntos alrededor de un círculo en 3D
 
 def circle_points(center, radius, z, num_points=100):
