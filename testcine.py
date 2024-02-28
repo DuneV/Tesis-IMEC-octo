@@ -286,6 +286,16 @@ angle_rad2 = np.radians(20)
 points2 = rotate_xy(points2, center, angle_rad)
 points2 = rotate_xz(points2, center, angle_rad2)
 
+points3 = np.copy(points2)
+center2 = np.array([B_point[0], B_point[1], B_point[2]])
+points3[:, 0] += center2[0]
+points3[:, 1] += center2[1]
+points3[:, 2] += center2[2]
+points3 = rotate_xy(points3, center, -angle_rad)
+points3 = rotate_xz(points3, center, -angle_rad2)
+
+
+ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
 # # Generar puntos para el segundo círculo y aplicar la rotación
 # x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
 # points2 = np.vstack((x2, y2, z2)).T
