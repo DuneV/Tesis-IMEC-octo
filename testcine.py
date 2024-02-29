@@ -9,7 +9,7 @@ import mpl_toolkits.mplot3d.art3d as art3d
 import numpy as np
 #plt.style.use('seaborn')
 
-AXIS_LIM = 2
+AXIS_LIM = 4
 
 # se define una sección como una parte del brazo
 class Seccion:
@@ -69,8 +69,8 @@ class Seccion:
         # self.vector1 = self.vector1.express(self.N)
         
         # encuentra los vectores de cuando esta comprimido con respecto a las ubicaciones de los springs en B
-        self.vector2 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle) + self.B.z * sin(self.angle))).express(self.N)
-        self.vector3 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle2) + self.B.z * sin(self.angle2))).express(self.N)
+        self.vector2 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle) + self.delta_x * self.B.z * sin(self.angle)).express(self.N)
+        self.vector3 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle2) + self.delta_x *self.B.z * sin(self.angle2)).express(self.N)
         
         # encuentro los vectores desd el punto O al punto del springs 1, 2 y 3 con respecto a N (R)
         self.vector_r1 = self.delta_x * self.N.x 
@@ -182,6 +182,7 @@ for label, (vector, color) in vectors.items():
 comp1 = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp1, color='g', s=50, label='B2')
 test2 = [x + y for x, y in zip(test2,  C_NC)]
+
 ax.scatter(*test2, color='b', s=50, label='test')
 
 plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
@@ -286,11 +287,20 @@ angle_rad2 = np.radians(20)
 points2 = rotate_xy(points2, center, angle_rad)
 points2 = rotate_xz(points2, center, angle_rad2)
 
+# ciculo 3
+
+points3 = np.copy(rotated_points)
+centerB = np.array([float(comp[0]), float(comp[1]), float(comp[2])])
+# points3[:, 0] += centerB[0] + center[0]
+# points3[:, 1] += centerB[1] + center[1]
+# points3[:, 2] += centerB[2] + center[2]
+
 # # Generar puntos para el segundo círculo y aplicar la rotación
 # x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
 # points2 = np.vstack((x2, y2, z2)).T
 # Visualizar el círculo antes y después de la rotación
 # ax.scatter(points2[:,0], points2[:,1], points2[:,2], color='blue', label='Original')
+ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
 ax.scatter(points2[:, 0], points2[:, 1], points2[:, 2], color='black')
 
 
