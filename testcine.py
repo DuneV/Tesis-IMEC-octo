@@ -49,8 +49,10 @@ class Seccion:
 
         # aqui sabemos que self.d_A es la distancia de N a A donde tenemos un vector AN_
         self.vector_OA = self.d_A * self.N.y
+
         # de igual forma con un vector de BA_ en dirección de Ay aqui deberia ser en B NO???? --- Probar
         self.vector_AB = self.d_B * self.B.y
+
         self.vector_AB = self.vector_AB.express(self.N)
 
         self.vector_N = self.vector_OA + self.vector_AB
@@ -69,13 +71,13 @@ class Seccion:
         # self.vector1 = self.vector1.express(self.N)
         
         # encuentra los vectores de cuando esta comprimido con respecto a las ubicaciones de los springs en B
-        self.vector2 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle) + self.delta_x * self.B.z * sin(self.angle)).express(self.N)
-        self.vector3 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle2) + self.delta_x *self.B.z * sin(self.angle2)).express(self.N)
+        self.vector2 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle) + self.B.z * sin(self.angle))).express(self.N)
+        self.vector3 = self.coords_B + (self.delta_x * (self.B.x * cos(-self.angle) + self.B.z * sin(-self.angle))).express(self.N)
         
         # encuentro los vectores desd el punto O al punto del springs 1, 2 y 3 con respecto a N (R)
         self.vector_r1 = self.delta_x * self.N.x 
         self.vector_r2 = self.delta_x * (self.N.x * cos(self.angle) + self.N.z * sin(self.angle))
-        self.vector_r3 = self.delta_x * (self.N.x * cos(self.angle2) + self.N.z * sin(self.angle2))
+        self.vector_r3 = self.delta_x * (self.N.x * cos(-self.angle) + self.N.z * sin(-self.angle))
 
     # función de actualización de valores
     def actualizar_valores(self, valores):
@@ -264,6 +266,20 @@ def rotate_xz(points, center, angle_rad):
     rotated_points = np.dot(translated_points, rotation_matrix.T) + center
     return rotated_points
 
+def rotate_yz(points, center, angle_rad):
+    # Restar el centro para trasladar los puntos al origen
+    translated_points = points - center
+    # Matriz de rotación en el plano YZ
+    rotation_matrix = np.array([
+        [1, 0, 0],
+        [0, np.cos(angle_rad), -np.sin(angle_rad)],
+        [0, np.sin(angle_rad), np.cos(angle_rad)]
+    ])
+    # Rotar los puntos y trasladarlos de vuelta
+    rotated_points = np.dot(translated_points, rotation_matrix.T) + center
+    return rotated_points
+
+
 # circulo 1
 
 x, y, z = circle_points([0, 0, 0], 0.5, 0)
@@ -285,7 +301,7 @@ points2[:, 2] += center[2]
 angle_rad = np.radians(30)  # Cambia este ángulo para ver diferentes rotaciones
 angle_rad2 = np.radians(20)
 points2 = rotate_xy(points2, center, angle_rad)
-points2 = rotate_xz(points2, center, angle_rad2)
+points2 = rotate_yz(points2, center, angle_rad2)
 
 # ciculo 3
 
