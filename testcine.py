@@ -49,8 +49,10 @@ class Seccion:
 
         # aqui sabemos que self.d_A es la distancia de N a A donde tenemos un vector AN_
         self.vector_OA = self.d_A * self.N.y
+
         # de igual forma con un vector de BA_ en dirección de Ay aqui deberia ser en B NO???? --- Probar
         self.vector_AB = self.d_B * self.B.y
+
         self.vector_AB = self.vector_AB.express(self.N)
 
         self.vector_N = self.vector_OA + self.vector_AB
@@ -69,13 +71,13 @@ class Seccion:
         # self.vector1 = self.vector1.express(self.N)
         
         # encuentra los vectores de cuando esta comprimido con respecto a las ubicaciones de los springs en B
-        self.vector2 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle) + self.delta_x * self.B.z * sin(self.angle)).express(self.N)
-        self.vector3 = self.coords_B + (self.delta_x * self.B.x * cos(self.angle2) + self.delta_x *self.B.z * sin(self.angle2)).express(self.N)
+        self.vector2 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle) + self.B.z * sin(self.angle))).express(self.N)
+        self.vector3 = self.coords_B + (self.delta_x * (self.B.x * cos(-self.angle) + self.B.z * sin(-self.angle))).express(self.N)
         
         # encuentro los vectores desd el punto O al punto del springs 1, 2 y 3 con respecto a N (R)
         self.vector_r1 = self.delta_x * self.N.x 
         self.vector_r2 = self.delta_x * (self.N.x * cos(self.angle) + self.N.z * sin(self.angle))
-        self.vector_r3 = self.delta_x * (self.N.x * cos(self.angle2) + self.N.z * sin(self.angle2))
+        self.vector_r3 = self.delta_x * (self.N.x * cos(-self.angle) + self.N.z * sin(-self.angle))
 
     # función de actualización de valores
     def actualizar_valores(self, valores):
@@ -142,22 +144,7 @@ test = seccion2.coords_B
 test = test.subs(seccion2.valores)
 comp = [test.dot(seccion.B.x), test.dot(seccion.B.y), test.dot(seccion.B.z)]
 
-test2 = [seccion2.vector1.dot(seccion2.N.x), seccion2.vector1.dot(seccion2.N.y), seccion2.vector1.dot(seccion2.N.z)]
-print(test2)
 
-# ax.scatter(*comp, color='g', s=50, label='B2')
-
-# ax.scatter(*seccion.B_point, color='k', s=50, label='B')
-# Graficar vector_OA
-vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
-plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
-
-# Punto A es el destino del vector_OA
-A = vector_OA_components
-
-# Graficar vector_AB desde el punto A
-vector_AB_components = vector_to_components(seccion.vector_AB, seccion.valores)
-plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
 
 # Graficar otros vectores desde el origen para simplificar
 vectors = {
@@ -179,11 +166,35 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.valores)
         plot_vector(ax, O, vector_components, color, label)
 
+# test2 = [seccion2.vector_r1.dot(seccion2.N.x), seccion2.vector_r1.dot(seccion2.N.y), seccion2.vector_r1.dot(seccion2.N.z)]
+test2 = seccion2.vector_r1.dot(seccion2.N.x)
+
+# test2 = [test2.dot(seccion2.N.x), test2.dot(seccion2.N.y), test2.dot(seccion2.N.z)]
+# test2 = [x + y for x, y in zip(test2,  C_NC)]
+# ax.scatter(*test2, color='b', s=50, label='test')
+
+
+print(test2)
+
+# ax.scatter(*comp, color='g', s=50, label='B2')
+
+# ax.scatter(*seccion.B_point, color='k', s=50, label='B')
+# Graficar vector_OA
+vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
+plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
+
+# Punto A es el destino del vector_OA
+A = vector_OA_components
+
+# Graficar vector_AB desde el punto A
+vector_AB_components = vector_to_components(seccion.vector_AB, seccion.valores)
+plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
+
 comp1 = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp1, color='g', s=50, label='B2')
-test2 = [x + y for x, y in zip(test2,  C_NC)]
+# test2 = [x + y for x, y in zip(test2,  C_NC)]
 
-ax.scatter(*test2, color='b', s=50, label='test')
+# ax.scatter(*test2, color='b', s=50, label='test')
 
 plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
 
@@ -264,6 +275,20 @@ def rotate_xz(points, center, angle_rad):
     rotated_points = np.dot(translated_points, rotation_matrix.T) + center
     return rotated_points
 
+def rotate_yz(points, center, angle_rad):
+    # Restar el centro para trasladar los puntos al origen
+    translated_points = points - center
+    # Matriz de rotación en el plano YZ
+    rotation_matrix = np.array([
+        [1, 0, 0],
+        [0, np.cos(angle_rad), -np.sin(angle_rad)],
+        [0, np.sin(angle_rad), np.cos(angle_rad)]
+    ])
+    # Rotar los puntos y trasladarlos de vuelta
+    rotated_points = np.dot(translated_points, rotation_matrix.T) + center
+    return rotated_points
+
+
 # circulo 1
 
 x, y, z = circle_points([0, 0, 0], 0.5, 0)
@@ -285,15 +310,15 @@ points2[:, 2] += center[2]
 angle_rad = np.radians(30)  # Cambia este ángulo para ver diferentes rotaciones
 angle_rad2 = np.radians(20)
 points2 = rotate_xy(points2, center, angle_rad)
-points2 = rotate_xz(points2, center, angle_rad2)
+points2 = rotate_yz(points2, center, angle_rad2)
 
 # ciculo 3
 
 points3 = np.copy(rotated_points)
 centerB = np.array([float(comp[0]), float(comp[1]), float(comp[2])])
-# points3[:, 0] += centerB[0] + center[0]
-# points3[:, 1] += centerB[1] + center[1]
-# points3[:, 2] += centerB[2] + center[2]
+points3[:, 0] += centerB[0] + center[0]
+points3[:, 1] += centerB[1] + center[1]
+points3[:, 2] += centerB[2] + center[2]
 
 points3 = np.copy(points2)
 center2 = np.array([B_point[0], B_point[1], B_point[2]])
