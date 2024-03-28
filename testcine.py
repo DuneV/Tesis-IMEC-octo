@@ -144,22 +144,7 @@ test = seccion2.coords_B
 test = test.subs(seccion2.valores)
 comp = [test.dot(seccion.B.x), test.dot(seccion.B.y), test.dot(seccion.B.z)]
 
-test2 = [seccion2.vector1.dot(seccion2.N.x), seccion2.vector1.dot(seccion2.N.y), seccion2.vector1.dot(seccion2.N.z)]
-print(test2)
 
-# ax.scatter(*comp, color='g', s=50, label='B2')
-
-# ax.scatter(*seccion.B_point, color='k', s=50, label='B')
-# Graficar vector_OA
-vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
-plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
-
-# Punto A es el destino del vector_OA
-A = vector_OA_components
-
-# Graficar vector_AB desde el punto A
-vector_AB_components = vector_to_components(seccion.vector_AB, seccion.valores)
-plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
 
 # Graficar otros vectores desde el origen para simplificar
 vectors = {
@@ -181,11 +166,35 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.valores)
         plot_vector(ax, O, vector_components, color, label)
 
+# test2 = [seccion2.vector_r1.dot(seccion2.N.x), seccion2.vector_r1.dot(seccion2.N.y), seccion2.vector_r1.dot(seccion2.N.z)]
+test2 = seccion2.vector_r1.dot(seccion2.N.x)
+
+# test2 = [test2.dot(seccion2.N.x), test2.dot(seccion2.N.y), test2.dot(seccion2.N.z)]
+# test2 = [x + y for x, y in zip(test2,  C_NC)]
+# ax.scatter(*test2, color='b', s=50, label='test')
+
+
+print(test2)
+
+# ax.scatter(*comp, color='g', s=50, label='B2')
+
+# ax.scatter(*seccion.B_point, color='k', s=50, label='B')
+# Graficar vector_OA
+vector_OA_components = vector_to_components(seccion.vector_OA, seccion.valores)
+plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
+
+# Punto A es el destino del vector_OA
+A = vector_OA_components
+
+# Graficar vector_AB desde el punto A
+vector_AB_components = vector_to_components(seccion.vector_AB, seccion.valores)
+plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
+
 comp1 = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp1, color='g', s=50, label='B2')
-test2 = [x + y for x, y in zip(test2,  C_NC)]
+# test2 = [x + y for x, y in zip(test2,  C_NC)]
 
-ax.scatter(*test2, color='b', s=50, label='test')
+# ax.scatter(*test2, color='b', s=50, label='test')
 
 plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
 
@@ -307,9 +316,9 @@ points2 = rotate_yz(points2, center, angle_rad2)
 
 points3 = np.copy(rotated_points)
 centerB = np.array([float(comp[0]), float(comp[1]), float(comp[2])])
-# points3[:, 0] += centerB[0] + center[0]
-# points3[:, 1] += centerB[1] + center[1]
-# points3[:, 2] += centerB[2] + center[2]
+points3[:, 0] += centerB[0] + center[0]
+points3[:, 1] += centerB[1] + center[1]
+points3[:, 2] += centerB[2] + center[2]
 
 # # Generar puntos para el segundo círculo y aplicar la rotación
 # x2, y2, z2 = circle_points([center[0], center[1], center[2]], 0.5, center[2])
