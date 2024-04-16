@@ -83,3 +83,10 @@ def rotate_points(points, angle_rad):
         [0, 0, 1]
     ])
     return np.dot(points, rotation_matrix.T)
+
+def vector_to_components(vector, frame, subs_dict=None):
+    if subs_dict:
+        vector = vector.subs(subs_dict)
+    return [float(vector.dot(frame.x).evalf(subs=subs_dict)), 
+            float(vector.dot(frame.y).evalf(subs=subs_dict)), 
+            float(vector.dot(frame.z).evalf(subs=subs_dict))]

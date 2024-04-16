@@ -30,16 +30,6 @@ seccion2 = Section(seccion.B, seccion.B_point, 0, np.radians(-20), np.radians(-3
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-# Convertir los vectores Sympy a componentes numéricas
-
-def vector_to_components(vector, frame, subs_dict=None):
-    if subs_dict:
-        vector = vector.subs(subs_dict)
-    return [float(vector.dot(frame.x).evalf(subs=subs_dict)), 
-            float(vector.dot(frame.y).evalf(subs=subs_dict)), 
-            float(vector.dot(frame.z).evalf(subs=subs_dict))]
-
-
 # Actualizar los valores de los vectores en la sección
 
 seccion.update_values(seccion.values)
@@ -67,7 +57,9 @@ vectors = {
     'vector_r1': (seccion.vector_r1, 'm'),
     'vector_r2': (seccion.vector_r2, 'orange'),
     'vector_r3': (seccion.vector_r3, 'purple'),
-    'vector_N': (seccion.vector_N, 'magenta')
+    'vector_N': (seccion.vector_N, 'magenta'),
+    'vector_OA': (seccion.vector_OA,'r'), 
+    'vector_AB': (seccion.vector_AB, 'g')
 }
 
 for label, (vector, color) in vectors.items():
@@ -75,21 +67,16 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.N , seccion.values)
         plot_vector(ax, O, vector_components, color, label)
         C_NC = vector_components
+    elif label == 'vector_OA':
+        vector_components = vector_to_components(vector, seccion.N , seccion.values)
+        plot_vector(ax, O, vector_components, color, label)
+        A = vector_components
+    elif label == 'vector_AB':
+        vector_components = vector_to_components(vector, seccion.N , seccion.values)
+        plot_vector(ax, A, vector_components, color, label)
     else:
         vector_components = vector_to_components(vector, seccion.N , seccion.values)
         plot_vector(ax, O, vector_components, color, label)
-
-# Graficar vector_OA
-
-vector_OA_components = vector_to_components(seccion.vector_OA, seccion.N , seccion.values)
-plot_vector(ax, O, vector_OA_components, 'r', 'vector_OA')
-
-# Punto A es el destino del vector_OA
-A = vector_OA_components
-
-# Graficar vector_AB desde el punto A
-vector_AB_components = vector_to_components(seccion.vector_AB, seccion.N , seccion.values)
-plot_vector(ax, A, vector_AB_components, 'g', 'vector_AB')
 
 comp1 = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp1, color='g', s=50, label='B2')
