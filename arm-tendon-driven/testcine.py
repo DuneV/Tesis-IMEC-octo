@@ -20,7 +20,7 @@ N_inicial = ReferenceFrame('N')
 O_inicial = Point('O')
 parametros = [
     (0, np.radians(20), np.radians(30), 1, 1, 0.5)  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
-]
+    ]
 
 # creation of the Sections
 
@@ -78,6 +78,34 @@ for label, (vector, color) in vectors.items():
         vector_components = vector_to_components(vector, seccion.N , seccion.values)
         plot_vector(ax, O, vector_components, color, label)
 
+
+vectors2 = {
+    'vector11': (seccion2.vector1, 'b'),
+    'vector22': (seccion2.vector2, 'y'),
+    'vector33': (seccion2.vector3, 'c'),
+    'vector_N2': (seccion2.vector_N, 'magenta'),
+    'vector_OA2': (seccion2.vector_OA,'r'), 
+    'vector_AB2': (seccion2.vector_AB, 'g')
+}
+
+for label, (vector, color) in vectors2.items():
+    if label == 'vector_N2':
+        vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
+        plot_vector(ax, C_NC, vector_components, color, label)
+        C_NC2 = vector_components + C_NC
+    elif label == 'vector_OA2':
+        vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
+        # plot_vector(ax, C_NC, vector_components, color, label)
+        A2 = vector_components 
+    elif label == 'vector_AB2':
+        vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
+        plot_vector(ax, A2, vector_components, color, label)
+    else:
+        vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
+        plot_vector(ax, C_NC, vector_components, color, label)
+
+
+
 comp1 = [x + y for x, y in zip(comp, C_NC)]
 ax.scatter(*comp1, color='g', s=50, label='B2')
 
@@ -122,8 +150,8 @@ center2 = np.array([B_point[0], B_point[1], B_point[2]])
 points3[:, 0] += comp[0]
 points3[:, 1] += comp[1]
 points3[:, 2] += comp[2]
-points3 = rotate_xy(points3, comp1, -angle_rad)
-points3 = rotate_xz(points3, comp1, -angle_rad2)
+points3 = rotate_xy(points3, center, -angle_rad)
+points3 = rotate_xz(points3, center, -angle_rad2)
 
 
 ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
