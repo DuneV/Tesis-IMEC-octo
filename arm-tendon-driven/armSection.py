@@ -72,7 +72,7 @@ class Section:
         # self.coords_B = self.B_point.pos_from(self.O).express(self.N) # another option ---> case to have more complicated system
         self.coords_B = self.vector_N.express(self.N)
 
-        # position of the vector on the spring
+        # origin to spring
         self.vector1 = self.coords_B + (self.delta_x * self.B.x).express(self.N) # neccesary to express it on N
 
         # self.vector1 = self.vector1.express(self.N)
@@ -88,11 +88,11 @@ class Section:
 
     # update the values
     def update_values(self, values):
-        self.vector_OA = self.vector_OA.subs(values)
+        self.vector_OAv = self.vector_OA.subs(values)
         self.vector_AB = self.vector_AB.subs(values)
         self.coords_B = self.coords_B.subs(values)
         self.vector1 = self.vector1.subs(values)
-        return self.vector1
+        return [self.vector_OAv, self.vector_OA]
     
     # found the extensión of the springs 
 
@@ -104,5 +104,5 @@ class Section:
     
     def documentation(self):
         print(Section.__doc__)
-        
+
 
