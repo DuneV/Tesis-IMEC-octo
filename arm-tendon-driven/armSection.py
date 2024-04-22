@@ -75,7 +75,6 @@ class Section:
         # origin to spring
         self.vector1 = self.coords_B + (self.delta_x * self.B.x).express(self.N) # neccesary to express it on N
 
-        # self.vector1 = self.vector1.express(self.N)
         
         # it found the vectors from the B part to the springs
         self.vector2 = self.coords_B + (self.delta_x * (self.B.x * cos(self.angle) + self.B.z * sin(self.angle))).express(self.N)
