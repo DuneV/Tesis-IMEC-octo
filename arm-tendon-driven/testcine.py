@@ -80,23 +80,27 @@ for label, (vector, color) in vectors.items():
 
 
 vectors2 = {
-    'vector11': (seccion2.vector1, 'b'),
-    'vector22': (seccion2.vector2, 'y'),
-    'vector33': (seccion2.vector3, 'c'),
+    # 'vector11': (seccion2.vector1, 'b'),
+    # 'vector22': (seccion2.vector2, 'y'),
     'vector_N2': (seccion2.vector_N, 'magenta'),
-    'vector_OA2': (seccion2.vector_OA,'r'), 
-    'vector_AB2': (seccion2.vector_AB, 'g')
+    'vector_OA2': (seccion2.vector_OA,'purple'), 
+    'vector_AB2': (seccion2.vector_AB, 'g'),
+    'vector33': (seccion2.vector3, 'c'),
+    'vector_r12': (seccion2.vector_r1, 'm'),
+    'vector_r22': (seccion2.vector_r2, 'orange'),
+    'vector_r32': (seccion2.vector_r3, 'purple'),
 }
 
 for label, (vector, color) in vectors2.items():
     if label == 'vector_N2':
         vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
         plot_vector(ax, C_NC, vector_components, color, label)
-        C_NC2 = vector_components + C_NC
+        C_NC2 = [a + b for a, b in zip(vector_components, C_NC)]
+        ax.scatter(*C_NC2, color='g', s=50, label='B2')
     elif label == 'vector_OA2':
         vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
-        # plot_vector(ax, C_NC, vector_components, color, label)
-        A2 = vector_components 
+        plot_vector(ax, C_NC, vector_components, color, label)
+        A2 = [a + b for a, b in zip(vector_components, C_NC)]
     elif label == 'vector_AB2':
         vector_components = vector_to_components(vector, seccion2.N , seccion2.values)
         plot_vector(ax, A2, vector_components, color, label)
@@ -107,17 +111,15 @@ for label, (vector, color) in vectors2.items():
 
 
 comp1 = [x + y for x, y in zip(comp, C_NC)]
-ax.scatter(*comp1, color='g', s=50, label='B2')
+# plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
 
-plot_vector(ax, C_NC, comp, 'red', 'vector_N2' )
+# comp2 = [comp2[0] - B_point[0], comp2[1] - B_point[1], comp2[2] - B_point[2]]
+# comp3 = [comp3[0] - B_point[0], comp3[1] - B_point[1], comp3[2] - B_point[2]]
+# comp4 = [comp4[0] - B_point[0], comp4[1] - B_point[1], comp4[2] - B_point[2]]
 
-comp2 = [comp2[0] - B_point[0], comp2[1] - B_point[1], comp2[2] - B_point[2]]
-comp3 = [comp3[0] - B_point[0], comp3[1] - B_point[1], comp3[2] - B_point[2]]
-comp4 = [comp4[0] - B_point[0], comp4[1] - B_point[1], comp4[2] - B_point[2]]
-
-plot_vector(ax, B_point, comp2, 'magenta', 'vector_r12')
-plot_vector(ax, B_point, comp3, 'g', 'vector_r22')
-plot_vector(ax, B_point, comp4, 'r', 'vector_r32')
+# plot_vector(ax, B_point, comp2, 'magenta', 'vector_r12')
+# plot_vector(ax, B_point, comp3, 'g', 'vector_r22')
+# plot_vector(ax, B_point, comp4, 'r', 'vector_r32')
 
 # circulo 1
 
@@ -144,17 +146,21 @@ points2 = rotate_yz(points2, center, angle_rad2)
 
 # ciculo 3
 
-
 points3 = np.copy(points2)
-center2 = np.array([B_point[0], B_point[1], B_point[2]])
+
+center2 = np.array([C_NC2[0], C_NC2[1], C_NC2[2]])
 points3[:, 0] += comp[0]
 points3[:, 1] += comp[1]
 points3[:, 2] += comp[2]
-points3 = rotate_xy(points3, center, -angle_rad)
-points3 = rotate_xz(points3, center, -angle_rad2)
+points3 = rotate_xy(points3, center2, -angle_rad)
+points3 = rotate_yz(points3, center2, -angle_rad2)
 
 
-ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
+
+
+ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='red')
+
+
 
 ax.scatter(points2[:, 0], points2[:, 1], points2[:, 2], color='black')
 
