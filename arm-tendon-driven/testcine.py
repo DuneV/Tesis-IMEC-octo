@@ -18,19 +18,45 @@ AXIS_LIM = 4
 
 N_inicial = ReferenceFrame('N')
 O_inicial = Point('O')
+# parametros = [
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 1),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 2),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 3),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 4),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 5),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 6),  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     (0, np.radians(20), np.radians(30), 1, 1, 0.5, 7)  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
+#     ]
+
 parametros = [
-    (0, np.radians(20), np.radians(30), 1, 1, 0.5)  # (q1 (y), q2(z), q3(x), d_A, d_B, delta_x distancia de O a los spring en mm) d_A + d_B = L
-    ]
+    (0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0),
+    (0, np.radians(-20), np.radians(-30), 1, 1, 0.5, 1)
+]
 
 def creation_octopus(parameters):
     N_inicial = ReferenceFrame('N')
     O_inicial = Point('O')
     counter_init = 0
-    for selection in parameters:
+    seccionn = [None] * len(parameters)
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    O = [0, 0, 0]
+    ax.scatter(*O, color='k', s=50, label='O')
+    comps = [None * len(parameters)*3, None*3] 
+    for i in range(len(parameters)):
         if counter_init == 0:
-            print(selection)
+            seccionn[i] = Section(N_inicial, O_inicial, parameters[0][0], parameters[0][1], parameters[0][2], parameters[0][3], parameters[0][4], parameters[0][5],parameters[0][6])
+            counter_init += 1 
+        else:
+            seccionn[i] = Section(seccionn[i-1].B, seccionn[i-1].B_point, parameters[i][0], parameters[i][1], parameters[i][2], parameters[i][3], parameters[i][4], parameters[i][5], parameters[i][6])
+        seccionn[i].update_values(seccionn[i].values)
+        
 
-creation_octopus(parametros)
+
+
+# creation_octopus(parametros)
+            
+
 
 # creation of the Sections
 
@@ -57,7 +83,7 @@ comp5 = vector_to_components(seccion2.vector1, seccion.B, seccion2.values)
 comp6 = vector_to_components(seccion2.vector2, seccion.B, seccion2.values)
 comp7 = vector_to_components(seccion2.vector3, seccion.B, seccion2.values)
 
-comp = vector_to_components(seccion2.coords_B, seccion.B, seccion2.values)
+centroid = vector_to_components(seccion2.coords_B, seccion.B, seccion2.values)
 
 # Graficar otros vectores desde el origen para simplificar
 vectors = {
@@ -157,9 +183,10 @@ points2 = rotate_yz(points2, center, angle_rad2)
 points3 = np.copy(points2)
 
 center2 = np.array([C_NC2[0], C_NC2[1], C_NC2[2]])
-points3[:, 0] += comp[0]
-points3[:, 1] += comp[1]
-points3[:, 2] += comp[2]
+points3[:, 0] += centroid[0]
+points3[:, 1] += centroid[1]
+points3[:, 2] += centroid[2]
+
 points3 = rotate_xy(points3, center2, -2*angle_rad)
 points3 = rotate_yz(points3, center2, -2*angle_rad2)
 
