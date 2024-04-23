@@ -181,19 +181,22 @@ points2 = rotate_yz(points2, center, angle_rad2)
 # ciculo 3
 
 points3 = np.copy(points2)
-
+# print(points3)
 center2 = np.array([C_NC2[0], C_NC2[1], C_NC2[2]])
+print(center2)
+print(centroid)
 points3[:, 0] += centroid[0]
 points3[:, 1] += centroid[1]
 points3[:, 2] += centroid[2]
+
 
 points3 = rotate_xy(points3, center2, -2*angle_rad)
 points3 = rotate_yz(points3, center2, -2*angle_rad2)
 
 
-ax.scatter(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
+ax.plot(points3[:, 0], points3[:, 1], points3[:, 2], color='black')
 ax.plot(rotated_points[:,0], rotated_points[:,1], rotated_points[:,2], color='black')
-ax.scatter(points2[:, 0], points2[:, 1], points2[:, 2], color='black')
+ax.plot(points2[:, 0], points2[:, 1], points2[:, 2], color='black')
 
 
 # Configuración del gráfico
