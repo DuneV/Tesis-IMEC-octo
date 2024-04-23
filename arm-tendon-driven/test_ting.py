@@ -19,12 +19,14 @@ def creation_octopus(parameters):
     centroid = np.zeros((len(parameters) - 1 , 3))
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+    angle_rad = np.zeros(len(parameters))  
+    angle_rad2 = np.zeros(len(parameters))
     O = [0, 0, 0]
     C_NC = np.zeros((len(parameters), 3))
     A = np.zeros((len(parameters), 3))
     ax.scatter(*O, color='k', s=50, label='O')
     comps = np.full((len(parameters)*3, 3), None, dtype=object) 
-    points_center = np.empty((100, 3, 7), dtype=np.float64)
+    points_center = np.empty((100, 3, len(parameters)), dtype=np.float64)
     for i in range(len(parameters)):
         if counter_init == 0:
             seccionn[i] = Section(N_inicial, O_inicial, parameters[0][0], parameters[0][1], parameters[0][2], parameters[0][3], parameters[0][4], parameters[0][5],parameters[0][6])
@@ -79,11 +81,16 @@ def creation_octopus(parameters):
             points_center[:,1,i] +=  center[1]
             points_center[:,2,i] +=  center[2]
 
-            angle_rad = parameters[0][2]  
-            angle_rad2 = parameters[0][1]
-            points_center[:,:,i] = rotate_xy(points_center[:,:,i], center, angle_rad)
-            points_center[:,:,i] = rotate_yz(points_center[:,:,i], center, angle_rad2)
+            angle_rad[i] = parameters[0][2]  
+            angle_rad2[i] = parameters[0][1]
+            points_center[:,:,i] = rotate_xy(points_center[:,:,i], center, angle_rad[i])
+            points_center[:,:,i] = rotate_yz(points_center[:,:,i], center, angle_rad2[i])
             ax.plot(points_center[:,0,i], points_center[:,1,i], points_center[:,2,i], color='black')
+            print('-----------')
+            print(angle_rad)
+            print(angle_rad2)
+            print(parameters[i][2])
+            print(parameters[i][1])
         else:
             seccionn[i] = Section(seccionn[i-1].B, seccionn[i-1].B_point, parameters[i][0], parameters[i][1], parameters[i][2], parameters[i][3], parameters[i][4], parameters[i][5], parameters[i][6])
             seccionn[i].update_values(seccionn[i].values)
@@ -124,36 +131,37 @@ def creation_octopus(parameters):
             plot_vector(ax, C_NC[i, :], comps[(i * 3) + 1][:], 'g', f'vector_r22_{i}')
             plot_vector(ax, C_NC[i, :], comps[(i * 3) + 2][:], 'r', f'vector_r32_{i}')
             
-            if 1 * np.sign(parameters[i][2])*np.sign(angle_rad) > 0:
-                angle_rad = parameters[i][2]
-            else:
-                if parameters[i][2] > 0:
-                    angle_rad = -1 * angle_rad + parameters[i][2]
-                else:
-                    angle_rad = -1 * angle_rad + parameters[i][2]
-            
+            if 1 * np.sign(parameters[i][2]) > 0 and 1 * np.sign(angle_rad[i-1]) > 0:
+                angle_rad[i] = parameters[i][2]
+            elif 1 * np.sign(parameters[i][2]) < 0 and 1 * np.sign(angle_rad[i-1]) > 0:
+                angle_rad[i] = - angle_rad[i -1] + parameters[i][2]
+            elif 1 * np.sign(parameters[i][2]) > 0 and 1 * np.sign(angle_rad[i-1]) < 0:
+                angle_rad[i] = - (angle_rad[i -1]/2) + parameters[i][2]
+    
 
+            if 1 * np.sign(parameters[i][1]) > 0 and 1 * np.sign(angle_rad2[i-1]) > 0:
+                angle_rad2[i] = parameters[i][1]
+            elif 1 * np.sign(parameters[i][1]) < 0 and 1 * np.sign(angle_rad2[i-1]) > 0:
+                angle_rad2[i] = - angle_rad2[i -1] + parameters[i][2]
+            elif 1 * np.sign(parameters[i][1]) > 0 and 1 * np.sign(angle_rad2[i-1]) < 0:
+                angle_rad2[i] = - (angle_rad2[i -1]/2) + parameters[i][1]
 
-            if 1 * np.sign(parameters[i][1])*np.sign(angle_rad2) > 0:
-                angle_rad2 = parameters[i][1]
-            else:
-                if parameters[i][1] > 0:
-                    angle_rad2 = -1 *angle_rad2 + parameters[i][1]
-                else:
-                    angle_rad2 = -1 * angle_rad2 + parameters[i][1]
+            print('-----------')
             print(angle_rad)
             print(angle_rad2)
             print(parameters[i][2])
             print(parameters[i][1])
 
-
             points_center[:,:,i] = np.copy(points_center[:,:, i-1])
             center2 = np.array([C_NC[i, 0], C_NC[i, 1], C_NC[i, 2]])
+
             points_center[:,0,i] +=  centroid[i - 1, 0]
             points_center[:,1,i] +=  centroid[i - 1, 1]
             points_center[:,2,i] +=  centroid[i - 1, 2]
-            points_center[:,:,i] = rotate_xy(points_center[:,:,i], center2, angle_rad)
-            points_center[:,:,i] = rotate_yz(points_center[:,:,i], center2, angle_rad2)
+
+            points_center[:,:,i] = rotate_xy(points_center[:,:,i], center2, angle_rad[i])
+            points_center[:,:,i] = rotate_yz(points_center[:,:,i], center2, angle_rad2[i])
+
             ax.plot(points_center[:,0,i], points_center[:,1,i], points_center[:,2,i], color='black')
 
     # Configuración del gráfico
@@ -170,7 +178,19 @@ def creation_octopus(parameters):
 
 parametros = [
     [0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0],
+    [0, np.radians(-40), np.radians(-20), 1, 1, 0.5, 1],
+    [0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0],
+    [0, np.radians(-15), np.radians(-40), 1, 1, 0.5, 1],
+    [0, np.radians(20), np.radians(30), 1, 1, 0.5, 1],
+    [0, np.radians(-42), np.radians(-36), 1, 1, 0.5, 1],
+    [0, np.radians(78), np.radians(87), 1, 1, 0.5, 1],
+    [0, np.radians(-20), np.radians(30), 1, 1, 0.5, 1],
+    [0, np.radians(20), np.radians(0), 1, 1, 0.5, 1],
     [0, np.radians(-20), np.radians(-30), 1, 1, 0.5, 1],
-    [0,  np.radians(20), np.radians(30), 1, 1, 0.5, 0]
+    [0, np.radians(20), np.radians(30), 1, 1, 0.5, 1],
+    [0, np.radians(-20), np.radians(-30), 1, 1, 0.5, 1],
+    [0, np.radians(20), np.radians(30), 1, 1, 0.5, 1],
+    [0, np.radians(-20), np.radians(-30), 1, 1, 0.5, 1],
+    [0, np.radians(20), np.radians(30), 1, 1, 0.5, 1]
 ]
 creation_octopus(parametros)
