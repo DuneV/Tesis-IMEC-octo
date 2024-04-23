@@ -81,7 +81,6 @@ def creation_octopus(parameters):
 
             angle_rad = parameters[0][2]  
             angle_rad2 = parameters[0][1]
-
             points_center[:,:,i] = rotate_xy(points_center[:,:,i], center, angle_rad)
             points_center[:,:,i] = rotate_yz(points_center[:,:,i], center, angle_rad2)
             ax.plot(points_center[:,0,i], points_center[:,1,i], points_center[:,2,i], color='black')
@@ -124,14 +123,29 @@ def creation_octopus(parameters):
             plot_vector(ax, C_NC[i, :], comps[(i * 3) ][:], 'magenta', f'vector_r12_{i}')
             plot_vector(ax, C_NC[i, :], comps[(i * 3) + 1][:], 'g', f'vector_r22_{i}')
             plot_vector(ax, C_NC[i, :], comps[(i * 3) + 2][:], 'r', f'vector_r32_{i}')
-            if 1 * np.sign(parameters[i][2]) > 0:
-                angle_rad = (angle_rad) * -1 + parameters[i][2]
+            
+            if 1 * np.sign(parameters[i][2])*np.sign(angle_rad) > 0:
+                angle_rad = parameters[i][2]
             else:
-                angle_rad = (angle_rad) + parameters[i][2]
-            if 1 * np.sign(parameters[i][2]) > 0:
-                angle_rad2 = (angle_rad2) * -1 + parameters[i][1]
+                if parameters[i][2] > 0:
+                    angle_rad = -1 * angle_rad + parameters[i][2]
+                else:
+                    angle_rad = -1 * angle_rad + parameters[i][2]
+            
+
+
+            if 1 * np.sign(parameters[i][1])*np.sign(angle_rad2) > 0:
+                angle_rad2 = parameters[i][1]
             else:
-                angle_rad2 = (angle_rad2)  + parameters[i][1]
+                if parameters[i][1] > 0:
+                    angle_rad2 = -1 *angle_rad2 + parameters[i][1]
+                else:
+                    angle_rad2 = -1 * angle_rad2 + parameters[i][1]
+            print(angle_rad)
+            print(angle_rad2)
+            print(parameters[i][2])
+            print(parameters[i][1])
+
 
             points_center[:,:,i] = np.copy(points_center[:,:, i-1])
             center2 = np.array([C_NC[i, 0], C_NC[i, 1], C_NC[i, 2]])

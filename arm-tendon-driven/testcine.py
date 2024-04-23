@@ -189,6 +189,8 @@ points3[:, 0] += centroid[0]
 points3[:, 1] += centroid[1]
 points3[:, 2] += centroid[2]
 
+print(-2*angle_rad)
+print(-2*angle_rad2)
 
 points3 = rotate_xy(points3, center2, -2*angle_rad)
 points3 = rotate_yz(points3, center2, -2*angle_rad2)
