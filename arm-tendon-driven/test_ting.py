@@ -23,7 +23,7 @@ def creation_octopus(parameters):
     angle_rad2 = np.zeros(len(parameters))
     springs_values = np.zeros((len(parameters), 3))
     O = [0, 0, 0]
-    C_NC = np.zeros((len(parameters), 3))
+    C_NC = np.zeros((len(parameters) * 3, 3))
     A = np.zeros((len(parameters), 3))
     ax.scatter(*O, color='k', s=50, label='O')
     comps = np.full((len(parameters)*3, 3), None, dtype=object) 
@@ -93,6 +93,10 @@ def creation_octopus(parameters):
             print(angle_rad2)
             print(parameters[i][2])
             print(parameters[i][1])
+            
+            # springs vectors
+            springs_values[(i * 3)][:], springs_values[(i * 3) + 1][:], springs_values[(i * 3) + 2][:] = seccionn[i].spring_vectors
+
         else:
             seccionn[i] = Section(seccionn[i-1].B, seccionn[i-1].B_point, parameters[i][0], parameters[i][1], parameters[i][2], parameters[i][3], parameters[i][4], parameters[i][5], parameters[i][6])
             seccionn[i].update_values(seccionn[i].values)
@@ -165,6 +169,8 @@ def creation_octopus(parameters):
             points_center[:,:,i] = rotate_yz(points_center[:,:,i], center2, angle_rad2[i])
 
             ax.plot(points_center[:,0,i], points_center[:,1,i], points_center[:,2,i], color='black')
+            # springs vectors
+            springs_values[(i * 3)][:], springs_values[(i * 3) + 1][:], springs_values[(i * 3) + 2][:] = seccionn[i].spring_vectors
 
     # Configuración del gráfico
     ax.set_xlabel('X')
