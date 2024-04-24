@@ -90,3 +90,6 @@ def vector_to_components(vector, frame, subs_dict=None):
     return [float(vector.dot(frame.x).evalf(subs=subs_dict)), 
             float(vector.dot(frame.y).evalf(subs=subs_dict)), 
             float(vector.dot(frame.z).evalf(subs=subs_dict))]
+
+def vector_magnitude(vector):
+    return np.sqrt(vector[0]**2 + vector[1]**2 + vector[2]**2)

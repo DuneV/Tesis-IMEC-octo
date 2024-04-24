@@ -99,7 +99,6 @@ class Section:
         self.vectork1 = self.vector1 - self.vector_r1
         self.vectork2 = self.vector2 - self.vector_r2
         self.vectork3 = self.vector3 - self.vector_r3
-        pass
     
     def documentation(self):
         print(Section.__doc__)
