@@ -95,8 +95,7 @@ def creation_octopus(parameters):
             print(parameters[i][1])
             
             # springs vectors
-            springs_values[(i * 3)][:], springs_values[(i * 3) + 1][:], springs_values[(i * 3) + 2][:] = seccionn[i].spring_vectors
-
+            print(seccionn[i].vectork1)
         else:
             seccionn[i] = Section(seccionn[i-1].B, seccionn[i-1].B_point, parameters[i][0], parameters[i][1], parameters[i][2], parameters[i][3], parameters[i][4], parameters[i][5], parameters[i][6])
             seccionn[i].update_values(seccionn[i].values)
