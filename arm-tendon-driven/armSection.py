@@ -85,6 +85,10 @@ class Section:
         self.vector_r2 = self.delta_x * (self.N.x * cos(self.angle) + self.N.z * sin(self.angle))
         self.vector_r3 = self.delta_x * (self.N.x * cos(-self.angle) + self.N.z * sin(-self.angle))
 
+        self.vectork1 = self.vector1 - self.vector_r1
+        self.vectork2 = self.vector2 - self.vector_r2
+        self.vectork3 = self.vector3 - self.vector_r3
+
     # update the values
     def update_values(self, values):
         self.vector_OAv = self.vector_OA.subs(values)

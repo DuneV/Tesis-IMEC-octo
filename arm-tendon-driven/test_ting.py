@@ -95,7 +95,9 @@ def creation_octopus(parameters):
             print(parameters[i][1])
             
             # springs vectors
-            springs_values[(i * 3)][:], springs_values[(i * 3) + 1][:], springs_values[(i * 3) + 2][:] = seccionn[i].spring_vectors
+            springs_values[(i * 3)][:] = seccionn[i].vectork1
+            springs_values[(i * 3) + 1][:] = seccionn[i].vectork2
+            springs_values[(i * 3) + 2][:] = seccionn[i].vectork3
 
         else:
             seccionn[i] = Section(seccionn[i-1].B, seccionn[i-1].B_point, parameters[i][0], parameters[i][1], parameters[i][2], parameters[i][3], parameters[i][4], parameters[i][5], parameters[i][6])
@@ -170,8 +172,10 @@ def creation_octopus(parameters):
 
             ax.plot(points_center[:,0,i], points_center[:,1,i], points_center[:,2,i], color='black')
             # springs vectors
-            springs_values[(i * 3)][:], springs_values[(i * 3) + 1][:], springs_values[(i * 3) + 2][:] = seccionn[i].spring_vectors
-
+            springs_values[(i * 3)][:] = seccionn[i].vectork1
+            springs_values[(i * 3) + 1][:] = seccionn[i].vectork2
+            springs_values[(i * 3) + 2][:] = seccionn[i].vectork3
+            
     # Configuración del gráfico
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
