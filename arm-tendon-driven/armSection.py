@@ -34,6 +34,7 @@ class Section:
         self.angle = 2 * pi / 3 
         self.angle2 = self.angle * 2 # change in case to add more springs to the module
         
+
         # reference frame
         self.N = N_prev
         # reference point
@@ -84,7 +85,9 @@ class Section:
         self.vector_r1 = self.delta_x * self.N.x 
         self.vector_r2 = self.delta_x * (self.N.x * cos(self.angle) + self.N.z * sin(self.angle))
         self.vector_r3 = self.delta_x * (self.N.x * cos(-self.angle) + self.N.z * sin(-self.angle))
-
+        
+        
+        
         self.vectork1 = self.vector1 - self.vector_r1
         self.vectork2 = self.vector2 - self.vector_r2
         self.vectork3 = self.vector3 - self.vector_r3
