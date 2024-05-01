@@ -11,7 +11,7 @@ from utility_t import *
 AXIS_LIM = 4
 
 
-def creation_octopus(parameters, just_data=0):
+def creation_octopus(parameters, just_data=0, k_spring=0):
     if just_data == 0:
         N_inicial = ReferenceFrame('N')
         O_inicial = Point('O')
@@ -72,7 +72,7 @@ def creation_octopus(parameters, just_data=0):
                 plot_vector(ax, C_NC[i, :], comps[(i * 3) + 1][:], 'g', f'vector_r22_{i}')
                 plot_vector(ax, C_NC[i, :], comps[(i * 3) + 2][:], 'r', f'vector_r32_{i}')
 
-                x, y, z = circle_points([0, 0, 0], 0.5, 0)
+                x, y, z = circle_points([0, 0, 0], parameters[0][5], 0)
                 points = np.vstack((x, y, z)).T
                 angle_rad_init = np.radians(90)
                 rotated_points = rotate_x(points, angle_rad_init)
