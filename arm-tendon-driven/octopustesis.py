@@ -8,7 +8,7 @@ import numpy as np
 from armSection import Section
 from utility_t import *
 
-AXIS_LIM = 4
+AXIS_LIM = 200
 
 
 def creation_octopus(parameters, just_data=0, k_spring=0):
@@ -183,12 +183,11 @@ def creation_octopus(parameters, just_data=0, k_spring=0):
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
-        # ax.legend()
-
+        # ax.legend(bbox_to_anchor=(1.1, 1.1), bbox_transform=ax.transAxes)
         ax.set_xlim(-AXIS_LIM, AXIS_LIM)
         ax.set_ylim(-AXIS_LIM, AXIS_LIM)
         ax.set_zlim(-AXIS_LIM, AXIS_LIM)
-
+        ax.view_init(-140, 60)
         plt.show()
     else:
         N_inicial = ReferenceFrame('N')
