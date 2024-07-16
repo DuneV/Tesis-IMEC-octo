@@ -1,11 +1,9 @@
 import requests
 import time
 
-# Reemplaza '<IP>' con la dirección IP de tu ESP32
+# Dirección IP del ESP32
 ip = '192.168.4.1'
-url_x = f'http://{ip}/AngleX'
-url_y = f'http://{ip}/AngleY'
-url_z = f'http://{ip}/AngleZ'
+url = f'http://{ip}/angles'
 
 def get_data(url):
     try:
@@ -20,9 +18,12 @@ def get_data(url):
         return None
 
 while True:
-    angle_x = get_data(url_x)
-    angle_y = get_data(url_y)
-    angle_z = get_data(url_z)
+    data = get_data(url)
+    if data:
+        try:
+            angle_x, angle_y, angle_z = map(float, data.split(';'))
+        except ValueError as e:
+            print(f"Data parsing error: {e}")
 
     if angle_x is not None and angle_y is not None and angle_z is not None:
         print(f"Angle X: {angle_x} *")
